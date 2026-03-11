@@ -89,7 +89,7 @@ def _print_intent(intent: dict):
 @click.group()
 @click.version_option("0.1.0", prog_name="lockr")
 def cli():
-    """Lockr — git-architecture secrets manager with PQ encryption."""
+    """Lockr — git-inspire secrets manager with PQ encryption."""
     pass
 
 
