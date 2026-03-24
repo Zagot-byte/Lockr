@@ -109,13 +109,61 @@ app = FastAPI(
 
 @app.get("/health")
 async def health():
+    """
+    Enhanced health check endpoint.
+
+    Returns comprehensive status including:
+    - Vault initialization status
+    - Audit chain integrity
+    - Disk space availability
+    - Master key status
+    - Post-quantum crypto availability
+    """
+    import os
+    import shutil
+
+    # Check vault initialization
+    vault_root = Path(".vault")
+    vault_initialized = vault_root.exists() and (vault_root / "vault.toml").exists()
+
+    # Check audit chain integrity
     chain_ok = log.verify_chain()
-    return {
-        "status":    "ok",
-        "env":       vault.current_env(),
-        "pq":        pq_status(),
-        "audit_chain": "intact" if chain_ok else "TAMPERED",
+
+    # Check disk space (in MB)
+    disk_stats = shutil.disk_usage(vault_root if vault_root.exists() else ".")
+    free_space_mb = disk_stats.free // (1024 * 1024)
+
+    # Check master key
+    master_key_set = os.getenv("VAULT_MASTER_KEY") is not None
+
+    # Check post-quantum crypto
+    pq_available = pq_status()
+
+    # Determine overall health status
+    is_healthy = all([
+        vault_initialized,
+        chain_ok,
+        free_space_mb > 100,  # At least 100MB free
+        master_key_set,
+    ])
+
+    status_code = 200 if is_healthy else 503
+
+    response = {
+        "status": "healthy" if is_healthy else "unhealthy",
+        "checks": {
+            "vault_initialized": vault_initialized,
+            "audit_chain_intact": chain_ok,
+            "master_key_set": master_key_set,
+            "disk_space_mb": free_space_mb,
+            "disk_space_ok": free_space_mb > 100,
+            "post_quantum_available": pq_available,
+        },
+        "environment": vault.current_env() if vault_initialized else "not_initialized",
+        "version": "0.1.0",
     }
+
+    return JSONResponse(content=response, status_code=status_code)
 
 
 # ---------------------------------------------------------------------------

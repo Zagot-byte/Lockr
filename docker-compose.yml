@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  lockr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lockr-api
+    ports:
+      - "8000:8000"
+    environment:
+      # Required: Set your vault master key
+      - VAULT_MASTER_KEY=${VAULT_MASTER_KEY:-change-me-in-production}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Persist vault data
+      - vault-data:/app/.vault
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - lockr-network
+
+volumes:
+  vault-data:
+    driver: local
+
+networks:
+  lockr-network:
+    driver: bridge

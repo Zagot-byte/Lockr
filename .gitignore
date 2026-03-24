@@ -1,0 +1,90 @@
+# Vault data (user secrets - NEVER commit!)
+.vault/
+*.vault
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+.tox/
+htmlcov/
+.hypothesis/
+*.cover
+.cache
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+*.log
+
+# Database
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# CI/CD
+.github/workflows/*.log
+
+# Development/internal docs (not for public)
+COMPLIANCE_MVP.md
+context.md
+GTM_STRATEGY.md
+KEY_ROTATION.md
+LANDING_PAGE_PROMPT.md
+NEXT_SESSION_PROMPTS.md
+PRODUCTION_ROADMAP.md
+PROJECT_AUDIT.md
+SIMPLIFIED_LLM.md
+START_HERE.md
+OPTIMIZATION_COMPLETE.md
+demo.sh
+config.env
+examples/
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride

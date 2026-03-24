@@ -19,6 +19,15 @@ class IntentType(str, Enum):
     UNKNOWN         = "unknown"
 
 
+# High-risk operations that always require confirmation
+CONFIRM_REQUIRED = {
+    IntentType.GRANT_ACCESS,
+    IntentType.REVOKE_ACCESS,
+    IntentType.ROTATE_KEYS,
+    IntentType.SECRET_DELETE,
+}
+
+
 class ParsedIntent(TypedDict):
     intent: str           # IntentType value
     command: str          # Suggested CLI command

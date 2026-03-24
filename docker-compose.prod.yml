@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Lockr API server
+  lockr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lockr-api
+    environment:
+      - VAULT_MASTER_KEY=${VAULT_MASTER_KEY}
+      - PYTHONUNBUFFERED=1
+      - ENVIRONMENT=production
+    volumes:
+      - vault-data:/app/.vault:rw
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - lockr-network
+    # Don't expose port directly - use reverse proxy
+    expose:
+      - "8000"
+
+  # Nginx reverse proxy with TLS
+  nginx:
+    image: nginx:alpine
+    container_name: lockr-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx-cache:/var/cache/nginx
+    depends_on:
+      - lockr
+    restart: always
+    networks:
+      - lockr-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  vault-data:
+    driver: local
+  nginx-cache:
+    driver: local
+
+networks:
+  lockr-network:
+    driver: bridge

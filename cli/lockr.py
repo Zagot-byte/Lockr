@@ -535,7 +535,7 @@ def compliance_check(framework: str, save: bool):
 @compliance.command("report")
 @click.option("--framework", default="soc2", help="Framework name")
 @click.option("--output", default=None, help="Output file path (default: print to terminal).")
-@click.option("--format", default="text", type=click.Choice(["text", "json"]), help="Report format")
+@click.option("--format", default="text", type=click.Choice(["text", "json", "pdf"]), help="Report format")
 def compliance_report(framework: str, output: Optional[str], format: str):
     """Generate detailed compliance report with evidence."""
     _require_init()
@@ -553,6 +553,39 @@ def compliance_report(framework: str, output: Optional[str], format: str):
 
     results = checker.check_framework(fw)
     summary = checker.generate_summary(results)
+
+    if format == "pdf":
+        # PDF format requires output file
+        if not output:
+            output = f".vault/compliance_results/{framework}_report_{__import__('datetime').datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            Path(output).parent.mkdir(parents=True, exist_ok=True)
+
+        from server.compliance.pdf_generator import generate_pdf_report
+
+        # Prepare data for PDF generator
+        report_data = {
+            "framework": {
+                "name": fw.name,
+                "version": fw.version,
+            },
+            "summary": summary,
+            "controls": [
+                {
+                    "id": r.control_id,
+                    "name": r.notes,
+                    "status": r.status,
+                    "automated": r.automated,
+                    "evidence": " | ".join(r.evidence) if r.evidence else "No evidence collected",
+                    "checked_at": r.checked_at
+                }
+                for r in results
+            ]
+        }
+
+        generate_pdf_report(fw.name, report_data, output)
+        console.print(f"[green]✓[/green] PDF report written to [bold]{output}[/bold]")
+        console.print(f"[dim]Compliance Score: {summary['compliance_score']}%[/dim]")
+        return
 
     if format == "json":
         report_data = {

@@ -1,0 +1,90 @@
+# Git
+.git/
+.gitignore
+.github/
+
+# Vault (user's vault should not be in image)
+.vault/
+*.vault
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+.tox/
+htmlcov/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation (except README)
+docs/
+*.md
+!README.md
+
+# Project files
+.env
+.env.local
+*.log
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Development files
+demo.sh
+examples/
+START_HERE.md
+PROJECT_AUDIT.md
+GTM_STRATEGY.md
+NEXT_SESSION_PROMPTS.md
+PRODUCTION_ROADMAP.md
+LANDING_PAGE_PROMPT.md
+COMPLIANCE_MVP.md
+KEY_ROTATION.md
+SIMPLIFIED_LLM.md
+context.md
